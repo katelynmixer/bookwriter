@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write — BookWriter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="writing-mode">
+
+    <!-- ── Timer Modal ────────────────────────────────────────── -->
+    <div id="timerModal" class="modal-overlay">
+        <div class="modal" style="max-width:420px">
+            <h2>Ready to write?</h2>
+            <div id="draftNotice" class="draft-notice hidden">
+                A draft from your last session is waiting — it'll appear in the writing area.
+            </div>
+            <p>Set a time goal for this session.</p>
+
+            <div class="time-options" id="timeOptions">
+                <button class="time-btn" data-minutes="10">10 min</button>
+                <button class="time-btn" data-minutes="15">15 min</button>
+                <button class="time-btn" data-minutes="25">25 min</button>
+                <button class="time-btn" data-minutes="30">30 min</button>
+            </div>
+
+            <div class="custom-time-row">
+                <input type="number" id="customMinutes" min="1" max="180" placeholder="Custom (minutes)">
+                <button id="startCustomBtn" class="btn btn-primary">Start</button>
+            </div>
+
+            <a href="index.html" class="back-link">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- ── Writing Interface ──────────────────────────────────── -->
+    <div id="writingInterface" class="writing-interface hidden">
+
+        <header class="write-header">
+            <div class="header-left">
+                <span class="timer-display" id="timerDisplay">00:00</span>
+                <button id="pauseBtn" class="ghost-btn">Pause</button>
+                <span id="timerDoneMsg" class="timer-done-msg hidden">Time's up — save when you're ready</span>
+            </div>
+            <div class="header-right">
+                <span id="liveWordCount" class="live-word-count">0 words</span>
+                <button id="saveTagBtn" class="save-tag-btn">Save &amp; Tag</button>
+            </div>
+        </header>
+
+        <main class="write-main">
+            <textarea
+                id="writeArea"
+                spellcheck="true"
+                placeholder="Begin. Don't worry about getting it right — just get it down."
+            ></textarea>
+        </main>
+
+    </div>
+
+    <!-- ── Save & Tag Panel ───────────────────────────────────── -->
+    <div id="savePanel" class="save-panel hidden">
+        <div class="save-overlay" id="saveOverlay"></div>
+
+        <div class="save-panel-inner">
+            <h3>Save &amp; Tag This Entry</h3>
+
+            <div id="emptyWarning" class="empty-warning hidden">
+                Nothing to save yet — write something first!
+            </div>
+
+            <div class="field-group">
+                <label for="charInput">Characters in this passage</label>
+                <input type="text" id="charInput" list="charSuggestions"
+                    placeholder="Type a character name, press Enter">
+                <datalist id="charSuggestions"></datalist>
+                <div class="tag-chips" id="charChips"></div>
+            </div>
+
+            <div class="field-group">
+                <label for="plotInput">Plot point or story beat</label>
+                <input type="text" id="plotInput" list="plotSuggestions"
+                    placeholder="Type a plot point, press Enter">
+                <datalist id="plotSuggestions"></datalist>
+                <div class="tag-chips" id="plotChips"></div>
+            </div>
+
+            <div class="field-group">
+                <label for="keyInput">Keywords</label>
+                <input type="text" id="keyInput"
+                    placeholder="e.g. chapter-3, tension, flashback — press Enter">
+                <div class="tag-chips" id="keyChips"></div>
+            </div>
+
+            <div class="field-group">
+                <label for="noteInput">Note to yourself (optional)</label>
+                <textarea id="noteInput" rows="2"
+                    placeholder="What do you want to remember about this passage?"></textarea>
+            </div>
+
+            <div class="save-actions">
+                <button id="cancelSaveBtn" class="btn btn-secondary">Keep Writing</button>
+                <button id="confirmSaveBtn" class="btn btn-primary">Save Entry →</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script src="sync.js"></script>
+    <script src="app.js"></script>
+    <script src="write.js"></script>
+</body>
+</html>

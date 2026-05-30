@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookWriter — Library</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="site-nav">
+        <a href="index.html" class="nav-brand">BookWriter</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="library.html" class="active">Library</a></li>
+        </ul>
+        <span id="syncStatus" class="sync-status">● Connecting…</span>
+    </nav>
+
+    <div class="library-layout">
+
+        <!-- Sidebar Filters -->
+        <aside class="library-sidebar">
+
+            <div class="sidebar-section">
+                <h3>Search</h3>
+                <input type="text" id="searchInput" placeholder="Search all entries…">
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Sort</h3>
+                <select id="sortSelect">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="longest">Longest first</option>
+                    <option value="shortest">Shortest first</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section" id="charFilterSection" style="display:none">
+                <h3>Characters</h3>
+                <div id="charFilters"></div>
+            </div>
+
+            <div class="sidebar-section" id="plotFilterSection" style="display:none">
+                <h3>Plot Points</h3>
+                <div id="plotFilters"></div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Date Range</h3>
+                <label>From</label>
+                <input type="date" id="dateFrom">
+                <label style="margin-top:0.5rem">To</label>
+                <input type="date" id="dateTo">
+            </div>
+
+            <button id="clearFiltersBtn" class="btn btn-secondary" style="width:100%">Clear Filters</button>
+            <button id="exportBtn" class="btn btn-secondary" style="width:100%">Export as .txt</button>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="library-main">
+            <div class="library-header">
+                <h1>Your Writing Library</h1>
+                <span id="entryCount">0 entries</span>
+            </div>
+            <div id="entriesList"></div>
+        </main>
+
+    </div>
+
+    <!-- Full Entry Modal -->
+    <div id="entryModal" class="modal-overlay" style="display:none">
+        <div class="modal modal-lg">
+            <div class="entry-modal-inner">
+                <div class="entry-modal-header">
+                    <div>
+                        <div class="entry-date" id="modalDate"></div>
+                        <div class="tag-chips" id="modalTags" style="margin-top:0.5rem"></div>
+                        <div id="modalNote" style="font-size:0.82rem;color:var(--text-muted);font-style:italic;margin-top:0.4rem"></div>
+                    </div>
+                    <button id="closeModalBtn" class="btn btn-secondary btn-sm">Close</button>
+                </div>
+                <div class="entry-modal-body">
+                    <p id="modalText"></p>
+                </div>
+                <div class="entry-modal-footer">
+                    <span class="text-muted text-sm" id="modalMeta"></span>
+                    <div style="display:flex;align-items:center;gap:0.75rem">
+                        <span id="copyConfirm" class="copy-confirm hidden">Copied!</span>
+                        <button id="copyEntryBtn" class="btn btn-primary btn-sm">Copy to Clipboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script src="sync.js"></script>
+    <script src="app.js"></script>
+    <script src="library.js"></script>
+</body>
+</html>
