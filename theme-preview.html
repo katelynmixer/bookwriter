@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWriter — Theme Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── SECTION SWITCHER ── */
+    .preview-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      background: #1a0803;
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #b07820;
+    }
+    .preview-nav button {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      color: #D1B782;
+      background: none;
+      border: none;
+      border-right: 1px solid #3a2010;
+      padding: 10px 18px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      transition: background 0.2s;
+    }
+    .preview-nav button:hover,
+    .preview-nav button.active {
+      background: #b07820;
+      color: #1a0803;
+    }
+    .preview-nav .label {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: #b07820;
+      padding: 10px 14px;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+
+    /* ── PAGES ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ════════════════════════════════════
+       DASHBOARD + LIBRARY THEME
+    ════════════════════════════════════ */
+    :root {
+      --bg: #D1B782;
+      --surface: #f0e0b0;
+      --surface-alt: #e8d098;
+      --text: #1a0803;
+      --text-muted: #6b4020;
+      --accent: #b07820;
+      --accent-light: #d4a030;
+      --terracotta: #8a3020;
+      --lapis: #2a4a72;
+      --gold-gradient: linear-gradient(150deg, #d49030 0%, #a06818 100%);
+      --corner-size: 14px;
+      --corner-weight: 2px;
+      --corner-color: #b07820;
+    }
+
+    /* ── DASHBOARD PAGE ── */
+    #page-dashboard {
+      background: var(--bg);
+      min-height: 100vh;
+      padding-top: 44px;
+      font-family: 'Lora', serif;
+      color: var(--text);
+    }
+
+    /* Parchment texture overlay */
+    #page-dashboard::before {
+      content: '';
+      position: fixed;
+      inset: 44px 0 0 0;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(26,8,3,0.03) 40px, rgba(26,8,3,0.03) 41px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(26,8,3,0.02) 60px, rgba(26,8,3,0.02) 61px);
+      z-index: 0;
+    }
+
+    .dash-nav {
+      background: #1a0803;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      border-bottom: 2px solid var(--accent);
+      position: fixed;
+      top: 44px; left: 0; right: 0;
+      z-index: 10;
+    }
+    .dash-nav .brand {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-light);
+      letter-spacing: 0.12em;
+    }
+    .dash-nav .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+    .dash-nav .nav-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      color: #D1B782;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 3px;
+      letter-spacing: 0.08em;
+      transition: background 0.2s, color 0.2s;
+    }
+    .dash-nav .nav-links a:hover,
+    .dash-nav .nav-links a.active {
+      background: var(--accent);
+      color: #1a0803;
+    }
+    .dash-nav .nav-right {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: #6b8040;
+      letter-spacing: 0.06em;
+    }
+
+    .dash-body {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 116px 24px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Nudge banner */
+    .nudge {
+      background: #1a0803;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 12px 20px;
+      margin-bottom: 28px;
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: #D1B782;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nudge .nudge-icon { font-size: 18px; }
+
+    /* Prompt card */
+    .prompt-card {
+      position: relative;
+      background: var(--surface);
+      border-radius: 4px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 12px rgba(26,8,3,0.18);
+    }
+    .prompt-card::before,
+    .prompt-card::after,
+    .prompt-card .corner-bl,
+    .prompt-card .corner-br {
+      content: '';
+      position: absolute;
+      width: var(--corner-size);
+      height: var(--corner-size);
+    }
+    .prompt-card::before {
+      top: 6px; left: 6px;
+      border-top: var(--corner-weight) solid var(--corner-color);
+      border-left: var(--corner-weight) solid var(--corner-color);
+    }
+    .prompt-card::after {
+      top: 6px; right: 6px;
+      border-top: var(--corner-weight) solid var(--corner-color);
+      border-right: var(--corner-weight) solid var(--corner-color);
+    }
+    .prompt-card .corner-bl {
+      bottom: 6px; left: 6px;
+      border-bottom: var(--corner-weight) solid var(--corner-color);
+      border-left: var(--corner-weight) solid var(--corner-color);
+    }
+    .prompt-card .corner-br {
+      bottom: 6px; right: 6px;
+      border-bottom: var(--corner-weight) solid var(--corner-color);
+      border-right: var(--corner-weight) solid var(--corner-color);
+    }
+    .card-label {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .prompt-text {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    /* Start button */
+    .start-btn {
+      display: block;
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #f0e0b0;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      border: none;
+      border-radius: 4px;
+      padding: 16px;
+      cursor: pointer;
+      box-shadow: 0 3px 14px rgba(176,120,32,0.45);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      transition: box-shadow 0.2s, transform 0.1s;
+    }
+    .start-btn:hover {
+      box-shadow: 0 5px 22px rgba(176,120,32,0.65);
+      transform: translateY(-1px);
+    }
+
+    /* Stats strip */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      position: relative;
+      background: var(--surface);
+      border-radius: 4px;
+      padding: 16px 14px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(26,8,3,0.14);
+    }
+    .stat-card::before,
+    .stat-card::after,
+    .stat-card .corner-bl,
+    .stat-card .corner-br {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+    }
+    .stat-card::before { top: 4px; left: 4px; border-top: 1.5px solid var(--corner-color); border-left: 1.5px solid var(--corner-color); }
+    .stat-card::after { top: 4px; right: 4px; border-top: 1.5px solid var(--corner-color); border-right: 1.5px solid var(--corner-color); }
+    .stat-card .corner-bl { bottom: 4px; left: 4px; border-bottom: 1.5px solid var(--corner-color); border-left: 1.5px solid var(--corner-color); }
+    .stat-card .corner-br { bottom: 4px; right: 4px; border-bottom: 1.5px solid var(--corner-color); border-right: 1.5px solid var(--corner-color); }
+    .stat-value {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Progress bar */
+    .progress-section {
+      background: var(--surface);
+      border-radius: 4px;
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(26,8,3,0.14);
+    }
+    .progress-section::before,
+    .progress-section::after,
+    .progress-section .corner-bl,
+    .progress-section .corner-br {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+    }
+    .progress-section::before { top: 4px; left: 4px; border-top: 1.5px solid var(--corner-color); border-left: 1.5px solid var(--corner-color); }
+    .progress-section::after { top: 4px; right: 4px; border-top: 1.5px solid var(--corner-color); border-right: 1.5px solid var(--corner-color); }
+    .progress-section .corner-bl { bottom: 4px; left: 4px; border-bottom: 1.5px solid var(--corner-color); border-left: 1.5px solid var(--corner-color); }
+    .progress-section .corner-br { bottom: 4px; right: 4px; border-bottom: 1.5px solid var(--corner-color); border-right: 1.5px solid var(--corner-color); }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .progress-header .label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; }
+    .progress-header .count { font-family: 'Cinzel', serif; font-size: 13px; color: var(--text-muted); }
+    .progress-track {
+      background: #d4b870;
+      border-radius: 3px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 62%;
+      background: linear-gradient(90deg, #a06818, #d49030);
+      border-radius: 3px;
+    }
+
+    /* Recent entries */
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(176,120,32,0.3);
+    }
+    .entry-card {
+      position: relative;
+      background: var(--surface);
+      border-radius: 4px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(26,8,3,0.14);
+    }
+    .entry-card::before,
+    .entry-card::after,
+    .entry-card .corner-bl,
+    .entry-card .corner-br {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+    }
+    .entry-card::before { top: 4px; left: 4px; border-top: 1.5px solid var(--corner-color); border-left: 1.5px solid var(--corner-color); }
+    .entry-card::after { top: 4px; right: 4px; border-top: 1.5px solid var(--corner-color); border-right: 1.5px solid var(--corner-color); }
+    .entry-card .corner-bl { bottom: 4px; left: 4px; border-bottom: 1.5px solid var(--corner-color); border-left: 1.5px solid var(--corner-color); }
+    .entry-card .corner-br { bottom: 4px; right: 4px; border-bottom: 1.5px solid var(--corner-color); border-right: 1.5px solid var(--corner-color); }
+    .entry-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .entry-date { font-family: 'Cinzel', serif; font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; }
+    .entry-wc { font-family: 'Cinzel', serif; font-size: 11px; color: var(--accent); }
+    .entry-excerpt { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      padding: 3px 10px;
+      border-radius: 2px;
+    }
+    .chip-char { background: #2a5030; color: #a0d8a0; }
+    .chip-plot { background: #5a1808; color: #e8a080; }
+    .chip-key { background: #1a2e50; color: #80a8d8; }
+
+
+    /* ════════════════════════════════════
+       WRITING MODE PAGE
+    ════════════════════════════════════ */
+    #page-writing {
+      background: #080c18;
+      min-height: 100vh;
+      padding-top: 44px;
+      font-family: 'Lora', serif;
+      color: #e0d0a8;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Starfield */
+    #page-writing .stars {
+      position: fixed;
+      inset: 44px 0 0 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .write-header {
+      position: fixed;
+      top: 44px; left: 0; right: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(8,12,24,0.85);
+      border-bottom: 1px solid rgba(212,160,48,0.25);
+      z-index: 10;
+    }
+    .timer-display {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #d4a030;
+      letter-spacing: 0.12em;
+    }
+    .write-wc {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      color: rgba(212,160,48,0.6);
+      letter-spacing: 0.1em;
+    }
+    .write-save-btn {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: #d4a030;
+      background: rgba(212,160,48,0.12);
+      border: 1px solid rgba(212,160,48,0.35);
+      border-radius: 3px;
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .write-save-btn:hover { background: rgba(212,160,48,0.22); }
+
+    .write-area-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      padding: 116px 24px 60px;
+    }
+    .write-area {
+      width: 100%;
+      max-width: 680px;
+      min-height: calc(100vh - 180px);
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: 'Lora', serif;
+      font-size: 18px;
+      line-height: 1.85;
+      color: #e0d0a8;
+      caret-color: #d4a030;
+    }
+    .write-area::placeholder { color: rgba(224,208,168,0.3); font-style: italic; }
+
+
+    /* ════════════════════════════════════
+       LOGIN PAGE
+    ════════════════════════════════════ */
+    #page-login {
+      background: #D1B782;
+      min-height: 100vh;
+      padding-top: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lora', serif;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(26,8,3,0.03) 40px, rgba(26,8,3,0.03) 41px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(26,8,3,0.02) 60px, rgba(26,8,3,0.02) 61px);
+    }
+    .login-card {
+      position: relative;
+      background: #f0e0b0;
+      border-radius: 4px;
+      padding: 52px 56px;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(26,8,3,0.25);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-card::before,
+    .login-card::after,
+    .login-card .corner-bl,
+    .login-card .corner-br {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+    }
+    .login-card::before { top: 10px; left: 10px; border-top: 2px solid #b07820; border-left: 2px solid #b07820; }
+    .login-card::after { top: 10px; right: 10px; border-top: 2px solid #b07820; border-right: 2px solid #b07820; }
+    .login-card .corner-bl { bottom: 10px; left: 10px; border-bottom: 2px solid #b07820; border-left: 2px solid #b07820; }
+    .login-card .corner-br { bottom: 10px; right: 10px; border-bottom: 2px solid #b07820; border-right: 2px solid #b07820; }
+
+    .login-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: #1a0803;
+      letter-spacing: 0.18em;
+      margin-bottom: 14px;
+    }
+    .login-divider {
+      width: 80px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, #b07820, transparent);
+      margin: 0 auto 14px;
+    }
+    .login-tagline {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 14px;
+      color: #6b4020;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 20px;
+      background: linear-gradient(150deg, #d49030 0%, #a06818 100%);
+      color: #f0e0b0;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 3px 14px rgba(176,120,32,0.45);
+      transition: box-shadow 0.2s, transform 0.1s;
+    }
+    .google-btn:hover { box-shadow: 0 5px 22px rgba(176,120,32,0.65); transform: translateY(-1px); }
+    .google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* ════════════════════════════════════
+       COLOR PALETTE SWATCH PAGE
+    ════════════════════════════════════ */
+    #page-palette {
+      background: #D1B782;
+      min-height: 100vh;
+      padding: 80px 32px 48px;
+      font-family: 'Lora', serif;
+    }
+    .palette-title {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      color: #1a0803;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .swatch {
+      border-radius: 4px;
+      width: 130px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(26,8,3,0.2);
+    }
+    .swatch-color { height: 70px; }
+    .swatch-label {
+      background: #f0e0b0;
+      padding: 8px 10px;
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: #1a0803;
+      line-height: 1.6;
+    }
+    .swatch-label .hex { color: #6b4020; }
+
+    .type-showcase {
+      background: #f0e0b0;
+      border-radius: 4px;
+      padding: 28px 32px;
+      position: relative;
+      box-shadow: 0 2px 12px rgba(26,8,3,0.18);
+      margin-bottom: 28px;
+    }
+    .type-showcase::before,
+    .type-showcase::after,
+    .type-showcase .corner-bl,
+    .type-showcase .corner-br {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+    }
+    .type-showcase::before { top: 6px; left: 6px; border-top: 2px solid #b07820; border-left: 2px solid #b07820; }
+    .type-showcase::after { top: 6px; right: 6px; border-top: 2px solid #b07820; border-right: 2px solid #b07820; }
+    .type-showcase .corner-bl { bottom: 6px; left: 6px; border-bottom: 2px solid #b07820; border-left: 2px solid #b07820; }
+    .type-showcase .corner-br { bottom: 6px; right: 6px; border-bottom: 2px solid #b07820; border-right: 2px solid #b07820; }
+    .cinzel-display { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; color: #1a0803; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .cinzel-sub { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 0.2em; color: #b07820; text-transform: uppercase; margin-bottom: 16px; }
+    .lora-body { font-family: 'Lora', serif; font-size: 15px; color: #3a1808; line-height: 1.7; margin-bottom: 10px; }
+    .lora-italic { font-family: 'Lora', serif; font-style: italic; font-size: 15px; color: #3a1808; line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+<!-- Preview nav -->
+<nav class="preview-nav">
+  <span class="label">PREVIEW:</span>
+  <button class="active" onclick="show('dashboard', this)">Dashboard</button>
+  <button onclick="show('writing', this)">Writing Mode</button>
+  <button onclick="show('login', this)">Login</button>
+  <button onclick="show('palette', this)">Colors &amp; Fonts</button>
+</nav>
+
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<div id="page-dashboard" class="page active">
+  <nav class="dash-nav">
+    <div class="brand">BOOKWRITER</div>
+    <div class="nav-links">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Library</a>
+    </div>
+    <div class="nav-right">● Synced &nbsp;·&nbsp; Katie M.</div>
+  </nav>
+
+  <div class="dash-body">
+
+    <!-- Nudge -->
+    <div class="nudge">
+      <span class="nudge-icon">📜</span>
+      You last wrote 2 days ago — your story is waiting for you.
+    </div>
+
+    <!-- Today's prompt -->
+    <div class="prompt-card">
+      <span class="corner-bl"></span><span class="corner-br"></span>
+      <div class="card-label">Today's Writing Prompt</div>
+      <div class="prompt-text">"Write the scene where your protagonist realizes they've been wrong about something important — and that the person they least trusted was right all along."</div>
+    </div>
+
+    <!-- Start button -->
+    <button class="start-btn">✦ &nbsp; Begin Writing &nbsp; ✦</button>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="stat-value">7</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+      <div class="stat-card">
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="stat-value">8,412</div>
+        <div class="stat-label">Total Words</div>
+      </div>
+      <div class="stat-card">
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="stat-value">186</div>
+        <div class="stat-label">Words Today</div>
+      </div>
+      <div class="stat-card">
+        <span class="corner-bl"></span><span class="corner-br"></span>
+        <div class="stat-value">24</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-section">
+      <span class="corner-bl"></span><span class="corner-br"></span>
+      <div class="progress-header">
+        <span class="label">Today's Progress</span>
+        <span class="count">186 / 300 words</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Recent entries -->
+    <div class="section-title">Recent Entries</div>
+
+    <div class="entry-card">
+      <span class="corner-bl"></span><span class="corner-br"></span>
+      <div class="entry-meta">
+        <span class="entry-date">May 30, 2026</span>
+        <span class="entry-wc">243 words</span>
+      </div>
+      <div class="entry-excerpt">The marketplace fell silent the moment Elena stepped through the gate. She hadn't expected that — the merchants usually called out to every passing stranger. But they knew her face now. Three weeks of asking questions had made sure of that…</div>
+      <div class="chips">
+        <span class="chip chip-char">Elena</span>
+        <span class="chip chip-char">Marcus</span>
+        <span class="chip chip-plot">First Meeting</span>
+        <span class="chip chip-key">tension</span>
+        <span class="chip chip-key">chapter-4</span>
+      </div>
+    </div>
+
+    <div class="entry-card">
+      <span class="corner-bl"></span><span class="corner-br"></span>
+      <div class="entry-meta">
+        <span class="entry-date">May 28, 2026</span>
+        <span class="entry-wc">189 words</span>
+      </div>
+      <div class="entry-excerpt">She pressed her back against the cold stone wall and listened. Footsteps — two sets — moving fast through the corridor above. They'd found the empty room already. Faster than she'd calculated…</div>
+      <div class="chips">
+        <span class="chip chip-char">Elena</span>
+        <span class="chip chip-plot">The Escape</span>
+        <span class="chip chip-key">flashback</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════ WRITING MODE ═══════════ -->
+<div id="page-writing" class="page">
+
+  <div class="write-header">
+    <div class="timer-display">24:38</div>
+    <div class="write-wc">312 words</div>
+    <button class="write-save-btn">Save &amp; Tag</button>
+  </div>
+
+  <div class="write-area-wrap">
+    <textarea class="write-area" placeholder="Begin your story here…">The gate to the lower city was always locked at midnight. Elena had checked every night for a week — always locked, always guarded by the same two soldiers who never spoke to each other and never quite met anyone's eyes.
+
+Tonight was different. One guard. And he was asleep.
+
+She didn't waste time wondering why. She'd learned that lesson early: the moment you stopped to question good fortune, someone took it away from you. So she crossed the courtyard quickly, keeping to the shadow of the aqueduct wall, and slipped through the gap in the iron gate before the torch at the far end swung her direction.
+
+The lower city smelled like the river and old smoke. She pulled her scarf up over her nose and moved toward the light she'd been promised — a single lamp burning in a window three streets down.</textarea>
+  </div>
+</div>
+
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="page-login" class="page">
+  <div class="login-card">
+    <span class="corner-bl"></span><span class="corner-br"></span>
+    <div class="login-brand">BOOKWRITER</div>
+    <div class="login-divider"></div>
+    <div class="login-tagline">Your story is waiting.<br>Write a little every day.</div>
+    <button class="google-btn">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff" opacity="0.9"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff" opacity="0.9"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#fff" opacity="0.9"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff" opacity="0.9"/>
+      </svg>
+      Sign in with Google
+    </button>
+  </div>
+</div>
+
+
+<!-- ═══════════ PALETTE ═══════════ -->
+<div id="page-palette" class="page">
+
+  <div class="palette-title">Color Palette</div>
+
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#D1B782"></div>
+      <div class="swatch-label">Page Background<br><span class="hex">#D1B782 — aged parchment</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#f0e0b0"></div>
+      <div class="swatch-label">Card Surface<br><span class="hex">#f0e0b0 — light parchment</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#1a0803"></div>
+      <div class="swatch-label">Text / Nav BG<br><span class="hex">#1a0803 — dark sepia ink</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#b07820"></div>
+      <div class="swatch-label">Accent / Gold<br><span class="hex">#b07820 — burnished gold</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#8a3020"></div>
+      <div class="swatch-label">Plot Tag<br><span class="hex">#8a3020 — terracotta</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#2a4a72"></div>
+      <div class="swatch-label">Keyword Tag<br><span class="hex">#2a4a72 — lapis lazuli</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#080c18"></div>
+      <div class="swatch-label">Writing Mode BG<br><span class="hex">#080c18 — midnight</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#d4a030"></div>
+      <div class="swatch-label">Writing Mode Gold<br><span class="hex">#d4a030 — torch gold</span></div>
+    </div>
+  </div>
+
+  <div class="palette-title">Typography</div>
+
+  <div class="type-showcase">
+    <span class="corner-bl"></span><span class="corner-br"></span>
+    <div class="cinzel-display">BOOKWRITER</div>
+    <div class="cinzel-sub">Cinzel — Navigation, Headings, Stats, Labels</div>
+    <div class="lora-body">Lora is used for body text, entry excerpts, and the writing textarea. It's a comfortable reading serif that doesn't tire your eyes during long sessions.</div>
+    <div class="lora-italic">"Write the scene where your protagonist realizes they've been wrong about something important." — italic Lora for prompts</div>
+  </div>
+
+</div>
+
+
+<script>
+  // Page switcher
+  function show(name, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.preview-nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+</script>
+
+</body>
+</html>
