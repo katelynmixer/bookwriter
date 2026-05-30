@@ -6,7 +6,7 @@
     <title>BookWriter — Library</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body style="visibility:hidden">
 
     <nav class="site-nav">
         <a href="index.html" class="nav-brand">BookWriter</a>
@@ -14,7 +14,10 @@
             <li><a href="index.html">Dashboard</a></li>
             <li><a href="library.html" class="active">Library</a></li>
         </ul>
-        <span id="syncStatus" class="sync-status">● Connecting…</span>
+        <div class="nav-right">
+            <div id="userMenu" class="user-menu"></div>
+            <span id="syncStatus" class="sync-status">● Connecting…</span>
+        </div>
     </nav>
 
     <div class="library-layout">
@@ -98,8 +101,10 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="firebase.js"></script>
+    <script src="auth.js"></script>
     <script src="sync.js"></script>
     <script src="app.js"></script>
     <script src="library.js"></script>

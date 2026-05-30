@@ -6,7 +6,7 @@
     <title>BookWriter — Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body style="visibility:hidden">
 
     <div id="nudge" class="nudge-banner" style="display:none"></div>
 
@@ -16,7 +16,10 @@
             <li><a href="index.html" class="active">Dashboard</a></li>
             <li><a href="library.html">Library</a></li>
         </ul>
-        <span id="syncStatus" class="sync-status">● Connecting…</span>
+        <div class="nav-right">
+            <div id="userMenu" class="user-menu"></div>
+            <span id="syncStatus" class="sync-status">● Connecting…</span>
+        </div>
     </nav>
 
     <main class="dashboard-main">
@@ -91,8 +94,10 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="firebase.js"></script>
+    <script src="auth.js"></script>
     <script src="sync.js"></script>
     <script src="app.js"></script>
     <script src="prompts.js"></script>

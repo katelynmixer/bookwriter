@@ -3,6 +3,7 @@ let syncDebounceTimer = null;
 // Push local data up to Firestore (called after every save)
 // Debounced so rapid saves don't spam Firestore
 function syncToFirestore() {
+    if (window.location.protocol === 'file:') return;
     clearTimeout(syncDebounceTimer);
     syncDebounceTimer = setTimeout(async () => {
         updateSyncStatus('syncing');
@@ -19,6 +20,10 @@ function syncToFirestore() {
 // Pull data down from Firestore and merge with local data
 // Called on page load so the device always has the latest entries
 async function syncFromFirestore() {
+    if (window.location.protocol === 'file:') {
+        updateSyncStatus('offline');
+        return false;
+    }
     updateSyncStatus('syncing');
     try {
         const doc = await FIRESTORE_REF.get();

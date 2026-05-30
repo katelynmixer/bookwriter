@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookWriter — Sign In</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-page">
+        <div class="login-card card">
+            <div class="login-brand">BookWriter</div>
+            <p class="login-tagline">Your story, your space.</p>
+            <button id="signInBtn" class="btn btn-primary btn-lg">
+                Sign in with Google
+            </button>
+            <p id="signInError" class="sign-in-error hidden"></p>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="firebase.js"></script>
+    <script>
+        // If already signed in, skip straight to the app
+        if (window.location.protocol === 'file:') {
+            window.location.replace('index.html');
+        } else {
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) window.location.replace('index.html');
+            });
+        }
+
+        document.getElementById('signInBtn').addEventListener('click', () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider)
+                .then(() => window.location.replace('index.html'))
+                .catch(() => {
+                    const err = document.getElementById('signInError');
+                    err.textContent = 'Sign-in failed. Make sure pop-ups are allowed and try again.';
+                    err.classList.remove('hidden');
+                });
+        });
+    </script>
+</body>
+</html>
