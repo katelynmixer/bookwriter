@@ -1,3 +1,10 @@
+// Track which prompt is currently shown so the refresh button can pick a different one
+const _todayIndex = (() => {
+    const start = new Date(new Date().getFullYear(), 0, 0);
+    return Math.floor((new Date() - start) / 86400000) % WRITING_PROMPTS.length;
+})();
+let currentPromptIndex = _todayIndex;
+
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('saved') === '1') {
@@ -11,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderStats();
     renderRecentEntries();
     setupGoalEditor();
+    setupRefreshPrompt();
 
     // Then pull from Firestore and refresh with the latest data
     syncFromFirestore().then(synced => {
@@ -56,7 +64,17 @@ function renderNudge() {
 }
 
 function renderPrompt() {
-    document.getElementById('todayPrompt').textContent = getTodayPrompt();
+    document.getElementById('todayPrompt').textContent = WRITING_PROMPTS[currentPromptIndex];
+}
+
+function setupRefreshPrompt() {
+    document.getElementById('refreshPromptBtn').addEventListener('click', () => {
+        let next;
+        do { next = Math.floor(Math.random() * WRITING_PROMPTS.length); }
+        while (next === currentPromptIndex && WRITING_PROMPTS.length > 1);
+        currentPromptIndex = next;
+        renderPrompt();
+    });
 }
 
 function renderStats() {

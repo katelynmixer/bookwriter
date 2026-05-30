@@ -475,6 +475,33 @@ body.writing-mode .chip-keyword   { background: #1a2848; color: #6090c0; }
 }
 
 /* Prompt card */
+.prompt-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.prompt-card-header .prompt-label { margin-bottom: 0; }
+
+.refresh-prompt-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    background: none;
+    border: 1px solid rgba(176,120,32,0.35);
+    border-radius: 3px;
+    color: var(--accent);
+    cursor: pointer;
+    padding: 0.25rem 0.65rem;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+.refresh-prompt-btn:hover {
+    background: rgba(176,120,32,0.1);
+    color: var(--accent-hover);
+}
+
 .prompt-label {
     font-family: 'Cinzel', serif;
     font-size: 0.72rem;
@@ -482,7 +509,6 @@ body.writing-mode .chip-keyword   { background: #1a2848; color: #6090c0; }
     color: var(--accent);
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    margin-bottom: 0.75rem;
 }
 
 .prompt-text {
